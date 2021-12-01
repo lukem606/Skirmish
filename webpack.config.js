@@ -8,7 +8,7 @@ module.exports = {
   output: {
     filename: "bundle.js",
     path: __dirname,
-    publicPath: __dirname,
+    publicPath: "/Skirmish/",
   },
   devServer: {
     static: __dirname,
