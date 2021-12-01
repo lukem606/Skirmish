@@ -7,11 +7,11 @@ module.exports = {
   },
   output: {
     filename: "bundle.js",
-    path: __dirname,
-    publicPath: "/Skirmish/",
+    path: path.resolve(__dirname),
+    publicPath: "/",
   },
   devServer: {
-    static: __dirname,
+    static: path.resolve(__dirname),
     open: true,
   },
   module: {
