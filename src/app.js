@@ -11,19 +11,29 @@ const setup = () => {
 const draw = () => {
   context.clearRect(0, 0, WIDTH, HEIGHT);
 
-  unit.update();
-  unit.checkEdges(canvas);
-  unit.render(context);
+  units.forEach((unit) => {
+    unit.update();
+    unit.checkEdges(canvas);
+    unit.render(context);
+  });
 
   requestAnimationFrame(draw);
 };
 
-const { canvas, context, WIDTH, HEIGHT } = setup();
+global = setup();
+const { canvas, context, WIDTH, HEIGHT } = global;
 
 const units = [];
 
-for (let i = 0; i < 5; i++) {}
-const unit = new Unit(50, 50);
-unit.velocity = new Vector(0.1, 0.2);
+for (let i = 0; i < 5; i++) {
+  const unit = new Unit(50 + i * 15, 50);
+
+  const velocity = new Vector(1, 2);
+  velocity.normalise();
+  velocity.mult(unit.stats.speed);
+
+  unit.velocity = velocity;
+  units.push(unit);
+}
 
 draw();

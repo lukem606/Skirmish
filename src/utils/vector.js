@@ -5,49 +5,42 @@ export default class Vector {
     this.z = z_ ? z_ : 0;
   }
 
-  static add(vector) {
-    const x = this.x + vector.x;
-    const y = this.y + vector.y;
-    const z = this.z + vector.z;
-    return new Vector(x, y, z);
+  static add(firstVector, secondVector) {
+    const x_ = firstVector.x + secondVector.x;
+    const y_ = firstVector.y + secondVector.y;
+    const z_ = firstVector.z + secondVector.z;
+    return new Vector(x_, y_, z_);
   }
 
-  static sub(vector) {
-    const x = this.x - vector.x;
-    const y = this.y - vector.y;
-    const z = this.z - vector.z;
-    return new Vector(x, y, z);
+  static sub(firstVector, secondVector) {
+    const x_ = firstVector.x - secondVector.x;
+    const y_ = firstVector.y - secondVector.y;
+    const z_ = firstVector.z - secondVector.z;
+    return new Vector(x_, y_, z_);
   }
 
-  static mult(vector) {
-    const x = this.x * vector.x;
-    const y = this.y * vector.y;
-    const z = this.z * vector.z;
-    return new Vector(x, y, z);
+  static mult(vector, scalar) {
+    const x_ = vector.x * scalar;
+    const y_ = vector.y * scalar;
+    const z_ = vector.z * scalar;
+    return new Vector(x_, y_, z_);
   }
 
-  static div(vector) {
-    let x, y, z;
+  static div(vector, scalar) {
+    let x_, y_, z_;
 
-    if (this.x !== 0 && vector.x !== 0) {
-      x = this.x / vector.x;
+    if (scalar !== 0) {
+      x_ = vector.x / scalar;
+      y_ = vector.y / scalar;
+      z_ = vector.z / scalar;
     } else {
-      x = 0;
+      console.warn("Dividing by zero!");
+      x_ = vector.x;
+      y_ = vector.y;
+      z_ = vector.z_;
     }
 
-    if (this.y !== 0 && vector.y !== 0) {
-      y = this.y / vector.y;
-    } else {
-      y = 0;
-    }
-
-    if (this.z !== 0 && vector.z !== 0) {
-      z = this.z / vector.z;
-    } else {
-      z = 0;
-    }
-
-    return new Vector(x, y, z);
+    return new Vector(x_, y_, z_);
   }
 
   static fromAngle2d(theta) {
@@ -75,28 +68,36 @@ export default class Vector {
     this.z -= vector.z;
   }
 
-  mult(vector) {
-    this.x *= vector.x;
-    this.y *= vector.y;
-    this.z *= vector.z;
+  mult(scalar) {
+    this.x *= scalar;
+    this.y *= scalar;
+    this.z *= scalar;
   }
 
-  div(vector) {
-    if (this.x !== 0 && vector.x !== 0) {
-      this.x /= vector.x;
-    }
-
-    if (this.y !== 0 && vector.y !== 0) {
-      this.y /= vector.y;
-    }
-
-    if (this.z !== 0 && vector.z !== 0) {
-      this.z /= vector.z;
+  div(scalar) {
+    if (scalar !== 0) {
+      this.x /= scalar;
+      this.y /= scalar;
+      this.z /= scalar;
+    } else {
+      console.warn("Dividing by zero!");
     }
   }
 
   copy() {
     return new Vector(this.x, this.y, this.z);
+  }
+
+  dist(secondVector) {
+    return Vector.sub(secondVector, this).magnitude();
+  }
+
+  equals(vector) {
+    if (this.x === vector.x && this.y === vector.y && this.z === vector.z) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   heading() {
