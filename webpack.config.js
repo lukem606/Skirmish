@@ -6,13 +6,12 @@ module.exports = {
     main: path.resolve(__dirname, "./src/app.js"),
   },
   output: {
-    filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "deploy"),
+    filename: "bundle.js",
+    path: __dirname,
     publicPath: __dirname,
-    clean: true,
   },
   devServer: {
-    static: "./deploy",
+    static: __dirname,
     open: true,
   },
   module: {
