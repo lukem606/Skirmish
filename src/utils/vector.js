@@ -84,12 +84,36 @@ export default class Vector {
     }
   }
 
+  angleBetween(vector) {
+    const dotmagmag =
+      this.dot(vector) / (this.magnitude() * vector.magnitude());
+
+    let angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
+    angle = angle * Math.sign(this.cross(vector).z || 1);
+    return angle;
+  }
+
   copy() {
     return new Vector(this.x, this.y, this.z);
   }
 
-  dist(secondVector) {
-    return Vector.sub(secondVector, this).magnitude();
+  cross(vector) {
+    const x_ = this.y * vector.z - this.z * vector.y;
+    const y_ = this.z * vector.x - this.x * vector.z;
+    const z_ = this.x * vector.y - this.y * vector.x;
+    return new Vector(x_, y_, z_);
+  }
+
+  dist(vector) {
+    return Vector.sub(vector, this).magnitude();
+  }
+
+  dot(vector) {
+    return (
+      this.x * (vector.x || 0) +
+      this.y * (vector.y || 0) +
+      this.z * (vector.z || 0)
+    );
   }
 
   equals(vector) {

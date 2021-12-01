@@ -3,8 +3,9 @@ export default class MathUtils {
     return (degrees * Math.PI) / 180;
   }
 
-  static randomInt(max) {
-    return Math.floor(Math.random() * max);
+  static random(min, max) {
+    const diff = max - min;
+    return Math.random() * diff + min;
   }
 
   static gaussian() {
@@ -15,5 +16,9 @@ export default class MathUtils {
     while (v === 0) v = Math.random();
 
     return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  }
+
+  static mean(numbers) {
+    return numbers.reduce((a, b) => a + b) / numbers.length;
   }
 }
