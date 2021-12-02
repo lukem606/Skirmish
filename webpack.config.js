@@ -6,11 +6,12 @@ module.exports = {
     main: path.resolve(__dirname, "./src/app.js"),
   },
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname),
+    filename: "main.js",
+    path: path.resolve(__dirname, "./deploy"),
+    publicPath: "/Skirmish/",
   },
   devServer: {
-    static: path.resolve(__dirname),
+    static: path.resolve(__dirname, "./deploy"),
     open: true,
   },
   module: {

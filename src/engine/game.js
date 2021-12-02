@@ -70,7 +70,17 @@ export default class Game {
         MathUtils.random(50, global.HEIGHT - 50)
       );
 
-      platoons.push(new Platoon(origin.x, origin.y));
+      const units = [];
+      for (let i = 0; i < Math.round(MathUtils.random(2, 9)); i++) {
+        units.push(
+          new Unit(
+            origin.x + MathUtils.gaussian() * 10,
+            origin.y + MathUtils.gaussian() * 10
+          )
+        );
+      }
+
+      platoons.push(new Platoon(origin.x, origin.y, units));
     }
 
     this.platoons = platoons;
