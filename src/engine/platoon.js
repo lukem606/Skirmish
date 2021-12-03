@@ -4,16 +4,17 @@ import Unit from "./unit.js";
 import Vector from "../utils/vector";
 
 export default class Platoon {
-  constructor(x_, y_, u_ = null) {
+  constructor(x_, y_, u_ = null, t_) {
     this.location = new Vector(x_, y_);
     this.velocity = new Vector(
       MathUtils.random(-1, 1),
       MathUtils.random(-1, 1)
     );
-    this.units = u_ ? u_ : this.populate();
+    this.units = u_ ? u_ : this.populate(t_);
     this.size = new Vector(30, 2.5 * this.units[0].size.y);
 
     this.stats = {
+      team: t_,
       speed: MathUtils.mean(this.units.map((unit) => unit.stats.speed)),
       fov: MathUtils.mean(this.units.map((unit) => unit.stats.fov)),
       restTime: MathUtils.mean(this.units.map((unit) => unit.stats.restTime)),
@@ -30,13 +31,14 @@ export default class Platoon {
     };
   }
 
-  populate() {
+  populate(team) {
     const units = [];
 
     for (let i = 0; i < 9; i++) {
       const unit = new Unit(
         this.location.x + Math.random() * 20,
-        this.location.y + Math.random() * 20
+        this.location.y + Math.random() * 20,
+        team
       );
       units.push(unit);
     }
