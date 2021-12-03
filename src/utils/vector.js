@@ -128,14 +128,20 @@ export default class Vector {
     return Math.atan2(this.y, this.x);
   }
 
+  limit(scalar) {
+    const mag = this.magnitude;
+    if (mag * mag > scalar * scalar) {
+      this.div(mag);
+      this.mult(scalar);
+    }
+  }
+
   normalise() {
     const length = this.magnitude();
 
     if (length !== 0) {
       this.mult(1 / length);
     }
-
-    return this;
   }
 
   magnitude() {
