@@ -1,20 +1,21 @@
+import { v4 as v4uuid } from "uuid";
 import Formations from "../utils/formations.js";
 import MathUtils from "../utils/mathUtils";
 import Unit from "./unit.js";
 import Vector from "../utils/vector";
 
 export default class Platoon {
-  constructor(x_, y_, u_ = null, t_) {
+  constructor(x_, y_, units = null, teamNumber) {
     this.location = new Vector(x_, y_);
     this.velocity = new Vector(
       MathUtils.random(-1, 1),
       MathUtils.random(-1, 1)
     );
-    this.units = u_ ? u_ : this.populate(t_);
+    this.units = units ? units : this.populate(teamNumber);
     this.size = new Vector(30, 2.5 * this.units[0].size.y);
 
     this.stats = {
-      team: t_,
+      team: teamNumber,
       speed: MathUtils.mean(this.units.map((unit) => unit.stats.speed)),
       fov: MathUtils.mean(this.units.map((unit) => unit.stats.fov)),
       restTime: MathUtils.mean(this.units.map((unit) => unit.stats.restTime)),
@@ -28,17 +29,18 @@ export default class Platoon {
       direction: 0,
       formation: Formations.getFormation(this.units.length),
       previous: performance.now(),
+      id: v4uuid(),
     };
   }
 
-  populate(team) {
+  populate(teamNumber) {
     const units = [];
 
     for (let i = 0; i < 9; i++) {
       const unit = new Unit(
         this.location.x + Math.random() * 20,
         this.location.y + Math.random() * 20,
-        team
+        teamNumber
       );
       units.push(unit);
     }
