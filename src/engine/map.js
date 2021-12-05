@@ -9,9 +9,7 @@ export default class Map {
     this.height = global.HEIGHT;
     this.cellsX = cellsX;
     this.cellsY = cellsY;
-    this.size = new Vector(global.WIDTH / cellsX, global.HEIGHT / cellsY);
-    this.cells = this.initialiseCells();
-    this.shiftedUnits = [];
+    this.cellSize = new Vector(global.WIDTH / cellsX, global.HEIGHT / cellsY);
   }
 
   initialiseCells() {
@@ -54,12 +52,18 @@ export default class Map {
     }
   }
 
-  cleanupCells() {
-    for (const unit of this.shiftedUnits) {
-      const cell = this.getMapCell(unit.location);
-      cell.units.push(unit);
+  render() {
+    const { context } = global;
+    for (let y = 0; y < this.cellsY; y++) {
+      for (let x = 0; x < this.cellsX; x++) {
+        context.strokeStyle = "rgb(100, 100, 100, 0.3)";
+        context.strokeRect(
+          x * this.cellSize.x,
+          y * this.cellSize.y,
+          this.cellSize.x,
+          this.cellSize.y
+        );
+      }
     }
-
-    this.shiftedUnits = [];
   }
 }

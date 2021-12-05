@@ -1,11 +1,11 @@
+import { v4 as v4uuid } from "uuid";
 import COLOURS from "../data/colours.js";
 import MathUtils from "../utils/mathUtils";
 import Vector from "../utils/vector";
 
 export default class Unit {
-  constructor(x_, y_, t_) {
+  constructor(x_, y_, teamNumber) {
     this.location = new Vector(x_, y_);
-    this.prevLocation = this.location.copy();
     this.velocity = new Vector(
       MathUtils.random(0, global.WIDTH),
       MathUtils.random(0, global.HEIGHT)
@@ -23,7 +23,7 @@ export default class Unit {
     const restTime = MathUtils.random(2, 4);
 
     this.stats = {
-      team: t_,
+      team: teamNumber,
       health: health,
       attack: attack,
       speed: speed,
@@ -36,6 +36,7 @@ export default class Unit {
       behaviour: "NON-COMBAT",
       action: "REST",
       previous: performance.now(),
+      id: v4uuid(),
     };
   }
 
@@ -166,8 +167,6 @@ export default class Unit {
   }
 
   updateLocation() {
-    this.prevLocation = this.location.copy();
-
     this.velocity.add(this.acceleration);
     this.velocity.limit(this.stats.speed);
     this.location.add(this.velocity);

@@ -2,7 +2,9 @@ import Init from "./init.js";
 
 export default class Game {
   constructor() {
-    this.map = Init.initialise();
+    Init.initialiseCanvas(20);
+    this.map = Init.initialiseMap();
+    this.grid = Init.initialiseGrid();
   }
 
   run() {
@@ -12,25 +14,34 @@ export default class Game {
 
   draw() {
     global.context.clearRect(0, 0, global.WIDTH, global.HEIGHT);
+    this.map.render();
 
-    for (const row of this.map.cells) {
-      for (const cell of row) {
-        cell.platoons.forEach((platoon) => {
-          platoon.update();
-          platoon.checkEdges();
-          platoon.render();
-        });
+    for (let y_ = 0; y_ < this.grid.cellsY; y_++) {
+      for (let x_ = 0; x_ < this.grid.cellsX; x_++) {
+        const cell = this.grid.cells[y_][x_];
+        let platoonNode = cell.platoons.head;
+        let unitNode = cell.units.head;
 
-        cell.units.forEach((unit) => {
+        // while (platoonNode) {
+        //   const platoon = platoonNode.value;
+        //   platoon.update();
+        //   platoon.checkEdges();
+        //   platoon.render();
+
+        //   platoonNode = platoonNode.next;
+        //   this.grid.updateCell(platoon, cell);
+        // }
+
+        while (unitNode) {
+          const unit = unitNode.value;
           unit.update();
           unit.checkEdges();
           unit.render();
 
-          this.map.updateCell(unit);
-        });
+          unitNode = unitNode.next;
+          this.grid.updateCell(unit, cell);
+        }
       }
     }
-
-    this.map.cleanupCells();
   }
 }

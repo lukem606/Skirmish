@@ -3,17 +3,9 @@ import MathUtils from "../utils/mathUtils.js";
 import Platoon from "./platoon.js";
 import Unit from "./unit.js";
 import Vector from "../utils/vector.js";
+import Grid from "./grid.js";
 
 export default class Init {
-  static initialise() {
-    this.initialiseCanvas(20);
-    const map = this.initialiseMap();
-    this.initialiseUnits(map);
-    this.initialisePlatoons(map);
-
-    return map;
-  }
-
   static initialiseCanvas(pad) {
     const WIDTH = window.innerWidth - pad * 2;
     const HEIGHT = window.innerHeight - pad * 2;
@@ -37,16 +29,24 @@ export default class Init {
       context: this.context,
       WIDTH: WIDTH,
       HEIGHT: HEIGHT,
-      mouseX: 0,
-      mouseY: 0,
     };
   }
 
   static initialiseMap() {
-    return new Map();
+    const map = new Map();
+
+    return map;
   }
 
-  static initialiseUnits(map) {
+  static initialiseGrid() {
+    const grid = new Grid(6, 4);
+    this.initialiseUnits(grid);
+    this.initialisePlatoons(grid);
+
+    return grid;
+  }
+
+  static initialiseUnits(grid) {
     for (let i = 0; i < 50; i++) {
       const origin = new Vector(
         Math.random() * global.WIDTH,
@@ -55,12 +55,12 @@ export default class Init {
 
       const unit = new Unit(origin.x, origin.y, i % 4);
 
-      const cell = map.getMapCell(origin);
-      cell.units.push(unit);
+      const cell = grid.getCellFromVector(origin);
+      cell.units.append(unit);
     }
   }
 
-  static initialisePlatoons(map) {
+  static initialisePlatoons(grid) {
     for (let i = 0; i < 5; i++) {
       const units = [];
 
@@ -75,12 +75,11 @@ export default class Init {
           origin.y + MathUtils.gaussian() * 10,
           0
         );
-
         units.push(unit);
       }
 
-      const cell = map.getMapCell(origin);
-      cell.platoons.push(new Platoon(origin.x, origin.y, units));
+      const cell = grid.getCellFromVector(origin);
+      cell.platoons.append(new Platoon(origin.x, origin.y, units));
     }
   }
 }
