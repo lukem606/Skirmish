@@ -9,6 +9,7 @@ These materials have been a massive help to me during development.
 - Daniel Schiffman's [The nature of code](https://natureofcode.com/)
 - Robert Nystrom's [Game programming patterns](https://gameprogrammingpatterns.com/)
 - Gablaxian's [super-js-adventure](https://gablaxian.com/articles/creating-a-game-with-javascript/introduction) and associated [repo](https://github.com/gablaxian/super-js-adventure)
+- BenSizer's article on [Game AI](https://www.gamedev.net/tutorials/programming/artificial-intelligence/the-total-beginners-guide-to-game-ai-r4942/)
 - Darshna Rekha's article on [doubly linked lists](https://medium.com/geekculture/doubly-linked-lists-javascript-b13cc21ca59d)
 - https://www.color-name.com/
 
