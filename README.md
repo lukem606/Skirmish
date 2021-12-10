@@ -2,7 +2,17 @@
 
 A real-time battle simulator, developed in JS.
 
-### Change log
+#### Resources
+
+These materials have been a massive help to me during development.
+
+- Daniel Schiffman's [The nature of code](https://natureofcode.com/)
+- Robert Nystrom's [Game programming patterns](https://gameprogrammingpatterns.com/)
+- Gablaxian's [super-js-adventure](https://gablaxian.com/articles/creating-a-game-with-javascript/introduction) and associated [repo](https://github.com/gablaxian/super-js-adventure)
+- Darshna Rekha's article on [doubly linked lists](https://medium.com/geekculture/doubly-linked-lists-javascript-b13cc21ca59d)
+- https://www.color-name.com/
+
+#### Change log
 
 *01/12/21*
 - Configured webpack
