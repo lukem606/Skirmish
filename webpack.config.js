@@ -9,6 +9,7 @@ module.exports = {
     filename: "main.js",
     path: path.resolve(__dirname, "./deploy"),
     publicPath: "/Skirmish/",
+    clean: true,
   },
   devServer: {
     static: path.resolve(__dirname, "./deploy"),
@@ -28,11 +29,24 @@ module.exports = {
       },
       {
         test: /\.css$/,
+        exclude: /node_modules/,
         use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
+        exclude: /node_modules/,
         type: "asset/resource",
+        generator: {
+          filename: "fonts/[hash][ext][query]",
+        },
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|svg)$/,
+        exclude: /node_modules/,
+        type: "asset/resource",
+        generator: {
+          filename: "fonts/[hash][ext][query]",
+        },
       },
     ],
   },

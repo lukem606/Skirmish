@@ -1,9 +1,9 @@
-import Map from "./map.js";
-import MathUtils from "../utils/mathUtils.js";
-import Platoon from "./platoon.js";
-import Unit from "./unit.js";
-import Vector from "../utils/vector.js";
-import Grid from "./grid.js";
+import Map from "./map";
+import MathUtils from "../utils/mathUtils";
+import Platoon from "./platoon";
+import Unit from "./unit";
+import Vector from "../utils/vector";
+import Grid from "./grid";
 
 export default class Init {
   static initialiseCanvas(pad) {
@@ -29,6 +29,18 @@ export default class Init {
       context: this.context,
       WIDTH: WIDTH,
       HEIGHT: HEIGHT,
+      unitTotals: {
+        RED: 0,
+        BLUE: 0,
+        GREEN: 0,
+        YELLOW: 0,
+      },
+      platoonTotals: {
+        RED: 0,
+        BLUE: 0,
+        GREEN: 0,
+        YELLOW: 0,
+      },
     };
   }
 
@@ -40,20 +52,35 @@ export default class Init {
 
   static initialiseGrid() {
     const grid = new Grid(6, 4);
-    this.initialiseUnits(grid);
+    // this.initialiseUnits(grid);
     this.initialisePlatoons(grid);
 
     return grid;
   }
 
   static initialiseUnits(grid) {
-    for (let i = 0; i < 50; i++) {
+    const { unitTotals } = global;
+    let colour;
+
+    for (let i = 0; i < 24; i++) {
       const origin = new Vector(
         Math.random() * global.WIDTH,
         Math.random() * global.HEIGHT
       );
 
-      const unit = new Unit(origin.x, origin.y, i % 4);
+      if (i % 4 === 0) {
+        colour = "RED";
+      } else if (i % 4 === 1) {
+        colour = "BLUE";
+      } else if (i % 4 === 2) {
+        colour = "GREEN";
+      } else if (i % 4 === 3) {
+        colour = "YELLOW";
+      }
+
+      //   colour = "RED";
+
+      const unit = new Unit(origin.x, origin.y, colour);
 
       const cell = grid.getCellFromVector(origin);
       cell.units.append(unit);
@@ -63,23 +90,13 @@ export default class Init {
   static initialisePlatoons(grid) {
     for (let i = 0; i < 5; i++) {
       const units = [];
-
       const origin = new Vector(
         MathUtils.random(50, global.WIDTH - 50),
         MathUtils.random(50, global.HEIGHT - 50)
       );
 
-      for (let i = 0; i < Math.round(MathUtils.random(2, 9)); i++) {
-        const unit = new Unit(
-          origin.x + MathUtils.gaussian() * 10,
-          origin.y + MathUtils.gaussian() * 10,
-          0
-        );
-        units.push(unit);
-      }
-
       const cell = grid.getCellFromVector(origin);
-      cell.platoons.append(new Platoon(origin.x, origin.y, units));
+      cell.platoons.append(new Platoon(origin.x, origin.y, false, "RED"));
     }
   }
 }

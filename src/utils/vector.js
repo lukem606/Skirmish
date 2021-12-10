@@ -85,11 +85,9 @@ export default class Vector {
   }
 
   angleBetween(vector) {
-    const dotmagmag =
-      this.dot(vector) / (this.magnitude() * vector.magnitude());
+    const direction = Vector.sub(vector, this);
+    const angle = direction.heading();
 
-    let angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
-    angle = angle * Math.sign(this.cross(vector).z || 1);
     return angle;
   }
 
@@ -106,6 +104,10 @@ export default class Vector {
 
   dist(vector) {
     return Vector.sub(vector, this).magnitude();
+  }
+
+  distSq(vector) {
+    return Vector.sub(vector, this).magSq();
   }
 
   dot(vector) {
@@ -128,6 +130,16 @@ export default class Vector {
     return Math.atan2(this.y, this.x);
   }
 
+  lerp(x_, y_, z_, amount) {
+    if (x_ instanceof Vector) {
+      this.lerp(x_.x, x_.y, x_.z, y_);
+    } else {
+      this.x += (x_ - this.x) * amount || 0;
+      this.y += (y_ - this.y) * amount || 0;
+      this.z += (z_ - this.z) * amount || 0;
+    }
+  }
+
   limit(scalar) {
     const mag = this.magnitude;
     if (mag * mag > scalar * scalar) {
@@ -146,5 +158,9 @@ export default class Vector {
 
   magnitude() {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+  }
+
+  magSq() {
+    return this.x * this.x + this.y * this.y + this.z * this.z;
   }
 }

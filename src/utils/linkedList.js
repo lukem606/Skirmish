@@ -2,7 +2,7 @@ export default class LinkedList {
   constructor(value = null) {
     this.head = value;
     this.tail = value;
-    this.length = value == null ? 0 : 1;
+    this.length = value ? 1 : 0;
   }
 
   getAll() {
@@ -46,10 +46,6 @@ export default class LinkedList {
 
   append(value) {
     const newNode = new Node(value);
-
-    console.log(this.head);
-    console.log(this.tail);
-    console.log(this.length);
 
     if (this.length === 0) {
       this.head = newNode;
@@ -95,33 +91,104 @@ export default class LinkedList {
     this.length++;
   }
 
-  remove(value) {
+  activateNodes(values) {
+    let valuesArray;
+    let activatedNodes = 0;
+
+    if (values.constructor === Array) {
+      valuesArray = values;
+    } else {
+      valuesArray = [values];
+    }
+
     let node = this.head;
 
     while (node) {
-      if (node.value === value) {
-        if (node.previous && node.next) {
-          node.previous.next = node.next;
-          node.next.previous = node.previous;
-        } else if (node.previous) {
-          this.tail = node.previous;
-          this.tail.next = null;
-        } else if (node.next) {
-          this.head = node.next;
-          this.head.previous = null;
-        } else {
-          this.head = null;
-          this.tail = this.head;
+      for (const value of valuesArray) {
+        if (node.value == value) {
+          node.active = true;
+          activatedNodes += 1;
         }
-
-        this.length--;
-        return;
       }
 
-      node = node.next;
+      if (activatedNodes === valuesArray.length) {
+        return;
+      } else {
+        node = node.next;
+      }
+    }
+  }
+
+  deactivateNodes(values) {
+    let valuesArray;
+    let deactivatedNodes = 0;
+
+    if (values.constructor === Array) {
+      valuesArray = values;
+    } else {
+      valuesArray = [values];
     }
 
-    console.warn(`"${value}" not found in list!`);
+    let node = this.head;
+
+    while (node) {
+      for (const value of valuesArray) {
+        if (node.value == value) {
+          node.active = false;
+          deactivatedNodes += 1;
+        }
+      }
+
+      if (deactivatedNodes === valuesArray.length) {
+        return;
+      } else {
+        node = node.next;
+      }
+    }
+  }
+
+  removeByValues(values) {
+    let valuesArray;
+    let removed = 0;
+
+    if (values.constructor === Array) {
+      valuesArray = values;
+    } else {
+      valuesArray = [values];
+    }
+
+    let node = this.head;
+
+    while (node) {
+      for (const value of valuesArray) {
+        if (node.value == value) {
+          if (node.previous && node.next) {
+            node.previous.next = node.next;
+            node.next.previous = node.previous;
+          } else if (node.previous) {
+            this.tail = node.previous;
+            this.tail.next = null;
+          } else if (node.next) {
+            this.head = node.next;
+            this.head.previous = null;
+          } else {
+            this.head = null;
+            this.tail = this.head;
+          }
+
+          this.length--;
+          removed += 1;
+        }
+      }
+
+      if (removed === valuesArray.length) {
+        return;
+      } else {
+        node = node.next;
+      }
+    }
+
+    console.warn(`"${array.join(", ")}" not found in list!`);
   }
 }
 
@@ -130,5 +197,6 @@ class Node {
     this.value = value;
     this.previous = null;
     this.next = null;
+    this.active = true;
   }
 }
