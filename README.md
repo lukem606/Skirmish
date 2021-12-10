@@ -12,7 +12,7 @@ These materials have been a massive help to me during development.
 - Ben Sizer's article on [game AI](https://www.gamedev.net/tutorials/programming/artificial-intelligence/the-total-beginners-guide-to-game-ai-r4942/)
 - Darshna Rekha's article on [doubly linked lists](https://medium.com/geekculture/doubly-linked-lists-javascript-b13cc21ca59d)
 - https://www.color-name.com/
-\
+
 #### Change log
 
 *01/12/21*
