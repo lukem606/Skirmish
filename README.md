@@ -15,23 +15,28 @@ These materials have been a massive help to me during development.
 
 #### Change log
 
-*01/12/21*
+_01/12/21_
+
 - Configured webpack
 - Added basic unit and platoon classes, and vector class
 - Units have basic patrol and rest behaviours
 
-*02/12/21*
+_02/12/21_
+
 - Configured to deploy direct to github pages
 
-*03/12/21*
+_03/12/21_
+
 - Unit animation and graphic updated
 - Added multiple engine classes; initialise, input, map
 - Added colour scheme data
 
-*05/12/21*
+_05/12/21_
+
 - Grid spatial partition added, linked lists added
 
-*10/12/21*
+_10/12/21_
+
 - Formations added for platoons
 - Overlay added for unit and platoon totals
 - Data and render methods separated in game.js
@@ -41,3 +46,9 @@ These materials have been a massive help to me during development.
 - Linked list and vector utility classes updated with more methods
 - Retro font added
 - Gameplay can be paused by pressing 'p'.
+
+_14/12/21_
+
+- Restructuring of project. Global lists for platoons and units, co-ordinate with grid cell lists.
+- Improved platoon movement and flocking.
+- Creating platoons from 2 joined units now stable.
