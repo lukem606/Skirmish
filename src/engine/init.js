@@ -62,7 +62,21 @@ export default class Init {
   }
 
   static initialiseGrid() {
-    const grid = new Grid(6, 4);
+    const { WIDTH, HEIGHT } = global;
+    let x_, y_;
+
+    if (WIDTH > HEIGHT) {
+      x_ = 6;
+      y_ = 4;
+    } else if (WIDTH < HEIGHT) {
+      x_ = 4;
+      y_ = 6;
+    } else if (WIDTH === HEIGHT) {
+      x_ = 6;
+      y_ = 6;
+    }
+
+    const grid = new Grid(x_, y_);
     return grid;
   }
 
@@ -121,8 +135,8 @@ export default class Init {
 
       for (let u = 0; u < 9; u++) {
         const unit = new Unit(
-          origin.x + Math.random() * 20,
-          origin.y + Math.random() * 20,
+          origin.x + MathUtils.random(-20, 20),
+          origin.y + MathUtils.random(-20, 20),
           colour
         );
 

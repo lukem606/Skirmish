@@ -1,6 +1,4 @@
 import { v4 as v4uuid } from "uuid";
-import COLOURS from "../data/colours";
-import ColourUtils from "../utils/coloursUtils";
 import Formations from "../data/formations";
 import LinkedList from "../utils/linkedList";
 import MathUtils from "../utils/mathUtils";

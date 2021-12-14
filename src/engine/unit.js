@@ -18,6 +18,7 @@ export default class Unit {
     this.size = new Vector(4, 8);
     this.angle = this.velocity.heading();
     this.angleOffset = 0;
+    this.velocity.mult(0);
 
     const health = 100;
     const attack = 20 + MathUtils.gaussian() * 2;
@@ -330,7 +331,7 @@ export default class Unit {
     if (this.location.y < this.size.x) {
       this.location.y = this.size.x;
     } else if (this.location.y > HEIGHT - this.size.x) {
-      this.location.y = WIDTH - this.size.x;
+      this.location.y = HEIGHT - this.size.x;
     }
   }
 }
