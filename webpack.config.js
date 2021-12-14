@@ -37,7 +37,7 @@ module.exports = {
         exclude: /node_modules/,
         type: "asset/resource",
         generator: {
-          filename: "fonts/[hash][ext][query]",
+          filename: "fonts/[name][ext][query]",
         },
       },
       {
@@ -45,7 +45,7 @@ module.exports = {
         exclude: /node_modules/,
         type: "asset/resource",
         generator: {
-          filename: "fonts/[hash][ext][query]",
+          filename: "fonts/[name][ext][query]",
         },
       },
     ],

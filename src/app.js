@@ -1,5 +1,3 @@
-import COLOURS from "./data/colours";
-import Colours from "./utils/colours";
 import Game from "./engine/game";
 import "./style.css";
 

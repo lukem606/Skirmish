@@ -91,6 +91,17 @@ export default class LinkedList {
     this.length++;
   }
 
+  merge(list) {
+    if (!list instanceof LinkedList) {
+      console.warn(
+        "LinkedList.merge must be passed an instance of a LinkedList"
+      );
+      return;
+    }
+
+    list.getAll().forEach((value) => this.append(value));
+  }
+
   activateNodes(values) {
     let valuesArray;
     let activatedNodes = 0;
@@ -147,6 +158,35 @@ export default class LinkedList {
     }
   }
 
+  removeById(id) {
+    let node = this.head;
+
+    while (node) {
+      if (node.value.state.id === id) {
+        if (node.previous && node.next) {
+          node.previous.next = node.next;
+          node.next.previous = node.previous;
+        } else if (node.previous) {
+          this.tail = node.previous;
+          this.tail.next = null;
+        } else if (node.next) {
+          this.head = node.next;
+          this.head.previous = null;
+        } else {
+          this.head = null;
+          this.tail = this.head;
+        }
+
+        this.length--;
+        return;
+      }
+
+      node = node.next;
+    }
+
+    console.warn(`Node with unit.id: ${id} not found in list!`);
+  }
+
   removeByValues(values) {
     let valuesArray;
     let removed = 0;
@@ -197,6 +237,5 @@ class Node {
     this.value = value;
     this.previous = null;
     this.next = null;
-    this.active = true;
   }
 }

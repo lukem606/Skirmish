@@ -1,6 +1,6 @@
 import { v4 as v4uuid } from "uuid";
 import COLOURS from "../data/colours";
-import Colours from "../utils/colours";
+import ColourUtils from "../utils/coloursUtils";
 import MathUtils from "../utils/mathUtils";
 import Vector from "../utils/vector";
 
@@ -8,6 +8,7 @@ export default class Unit {
   constructor(x_, y_, teamName) {
     const { unitTotals } = global;
     unitTotals[teamName] = unitTotals[teamName] + 1;
+
     this.location = new Vector(x_, y_);
     this.velocity = new Vector(
       MathUtils.random(-1, 1),
@@ -27,7 +28,6 @@ export default class Unit {
 
     this.stats = {
       team: teamName,
-      platoon: null,
       health: health,
       attack: attack,
       speed: speed,
@@ -38,13 +38,14 @@ export default class Unit {
     };
 
     this.state = {
+      id: v4uuid(),
+      platoon: null,
       behaviour: "NON-COMBAT",
       action: "REST",
       destination: null,
       target: null,
       previous: performance.now(),
-      id: v4uuid(),
-      colour: Colours.getRGB(COLOURS.teams[teamName]),
+      colour: ColourUtils.getRGB(COLOURS.teams[teamName]),
     };
   }
 
@@ -96,9 +97,9 @@ export default class Unit {
 
   combatBehaviour() {
     if (this.state.action === "ATTACK") {
-      //pass
+      // TODO
     } else if (this.state.action === "SEARCH") {
-      //pass
+      // TODO
     }
   }
 
@@ -136,13 +137,13 @@ export default class Unit {
       this.state.target = null;
       this.state.destination = null;
       this.state.behaviour = "PLATOON";
-      this.state.action = "PLATOON";
-      this.stats.platoon = [this, ally];
+      this.state.action = "JOINING";
+      this.state.platoon = reference;
       ally.state.target = null;
       ally.state.destination = null;
       ally.state.behaviour = "PLATOON";
-      ally.state.action = "PLATOON";
-      ally.stats.platoon = [this, ally];
+      ally.state.action = "JOINING";
+      ally.state.platoon = reference;
     } else {
       this.seek(this.state.target.location);
       this.updateLocation();
@@ -150,21 +151,19 @@ export default class Unit {
   }
 
   seek(destination) {
-    const { context } = global;
-
     const future = Vector.sub(destination, this.location);
     future.normalise();
     future.mult(this.stats.acuity / 2);
 
     const angle = MathUtils.random(0, 2 * Math.PI);
-    // const radius = this.stats.acuity / 2;
     const radius = this.size.y;
+
     const steer = Vector.add(
       future,
       new Vector(Math.cos(angle) * radius, Math.sin(angle) * radius)
     );
     steer.normalise();
-    steer.mult(this.stats.speed);
+    steer.mult(this.getSpeed());
     steer.sub(this.velocity);
 
     this.angle =
@@ -201,7 +200,7 @@ export default class Unit {
     if (count >= 1) {
       avoid.div(count);
       avoid.normalise();
-      avoid.mult(this.stats.speed);
+      avoid.mult(this.getSpeed());
       avoid.sub(this.velocity);
     }
 
@@ -232,7 +231,7 @@ export default class Unit {
     if (count >= 1) {
       cohere.div(count);
       cohere.normalise();
-      cohere.mult(this.stats.speed);
+      cohere.mult(this.getSpeed());
       cohere.sub(this.velocity);
     }
 
@@ -254,7 +253,7 @@ export default class Unit {
 
     align.div(others.length);
     align.normalise();
-    align.mult(this.stats.speed);
+    align.mult(this.getSpeed());
     align.sub(this.velocity);
 
     if (this.state.behaviour === "PLATOON") {
@@ -285,7 +284,7 @@ export default class Unit {
 
   updateLocation() {
     this.velocity.add(this.acceleration);
-    this.velocity.limit(this.stats.speed);
+    this.velocity.limit(this.getSpeed());
     this.location.add(this.velocity);
 
     this.acceleration.mult(0);
@@ -311,89 +310,27 @@ export default class Unit {
     this.acceleration.add(force);
   }
 
+  getSpeed() {
+    if (this.state.behaviour === "PLATOON") {
+      return this.state.platoon.stats.speed;
+    } else {
+      return this.stats.speed;
+    }
+  }
+
   checkEdges() {
     const { WIDTH, HEIGHT } = global;
 
-    if (this.location.x < 0) {
-      this.location.x = 0;
+    if (this.location.x < this.size.x) {
+      this.location.x = this.size.x;
     } else if (this.location.x > WIDTH - this.size.x) {
       this.location.x = WIDTH - this.size.x;
     }
 
-    if (this.location.y < 0) {
-      this.location.y = 0;
-    } else if (this.location.y > HEIGHT - this.size.y) {
-      this.location.y = HEIGHT - this.size.y;
+    if (this.location.y < this.size.x) {
+      this.location.y = this.size.x;
+    } else if (this.location.y > HEIGHT - this.size.x) {
+      this.location.y = WIDTH - this.size.x;
     }
-  }
-
-  render() {
-    const { context } = global;
-    context.save();
-    context.translate(this.location.x, this.location.y);
-    context.rotate(this.angle);
-
-    // context.beginPath();
-    // context.fillStyle = "rgba(255, 0, 0, 0.2)";
-    // context.lineTo(
-    //   Math.cos(MathUtils.degreesToRadians((-1 * this.stats.FOV) / 2)),
-    //   Math.sin(MathUtils.degreesToRadians((-1 * this.stats.FOV) / 2))
-    // );
-    // context.arc(
-    //   0,
-    //   0,
-    //   this.stats.acuity,
-    //   MathUtils.degreesToRadians((-1 * this.stats.FOV) / 2),
-    //   MathUtils.degreesToRadians(this.stats.FOV / 2)
-    // );
-    // context.lineTo(0, 0);
-    // context.fill();
-    // context.closePath();
-
-    // context.beginPath();
-    // context.fillStyle = "rgba(0, 0, 255, 0.4)";
-    // context.lineTo(
-    //   Math.cos(MathUtils.degreesToRadians((-1 * this.stats.FOV) / 2)),
-    //   Math.sin(MathUtils.degreesToRadians((-1 * this.stats.FOV) / 2))
-    // );
-    // context.arc(
-    //   0,
-    //   0,
-    //   this.stats.range,
-    //   MathUtils.degreesToRadians((-1 * this.stats.FOV) / 2),
-    //   MathUtils.degreesToRadians(this.stats.FOV / 2)
-    // );
-    // context.lineTo(0, 0);
-    // context.fill();
-    // context.closePath();
-
-    context.fillStyle = this.state.colour;
-
-    context.fillRect(
-      -0.25 * this.size.x,
-      -0.5 * this.size.y,
-      0.5 * this.size.x,
-      0.25 * this.size.y
-    );
-    context.fillRect(
-      -0.25 * this.size.x,
-      0.25 * this.size.y,
-      0.5 * this.size.x,
-      0.25 * this.size.y
-    );
-    context.fillRect(
-      -0.5 * this.size.x,
-      -0.25 * this.size.y,
-      this.size.x,
-      0.5 * this.size.y
-    );
-
-    context.restore();
-
-    // context.font = "8px PressStart2P";
-    // context.fillStyle = "rgba(255, 255, 255, 0.5)";
-    // context.textBaseline = "top";
-    // context.textAlign = "center";
-    // context.fillText(this.state.id, this.location.x, this.location.y - 30);
   }
 }

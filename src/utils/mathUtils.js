@@ -1,3 +1,5 @@
+import Vector from "./vector";
+
 export default class MathUtils {
   static degreesToRadians(degrees) {
     return (degrees * Math.PI) / 180;
@@ -20,6 +22,19 @@ export default class MathUtils {
 
   static mean(numbers) {
     return numbers.reduce((a, b) => a + b) / numbers.length;
+  }
+
+  static meanVector(vectors) {
+    const total = new Vector();
+
+    for (let vector of vectors) {
+      total.x += vector.x;
+      total.y += vector.y;
+      total.z += vector.z;
+    }
+
+    total.div(vectors.length);
+    return total;
   }
 
   static map(number, prevMin, prevMax, newMin, newMax) {

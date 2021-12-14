@@ -1,10 +1,7 @@
-import COLOURS from "../data/colours";
-import Colours from "../utils/colours";
 import LinkedList from "../utils/linkedList";
 import MathUtils from "../utils/mathUtils";
 import Platoon from "./platoon";
 import Vector from "../utils/vector";
-import Unit from "./unit";
 
 export default class Grid {
   constructor(x_, y_) {
@@ -26,7 +23,6 @@ export default class Grid {
         row.push({
           position: new Vector(x_, y_),
           obstacles: new LinkedList(),
-          platoons: new LinkedList(),
           units: new LinkedList(),
           ballistics: new LinkedList(),
         });
@@ -39,32 +35,33 @@ export default class Grid {
   }
 
   getCellFromVector(location) {
-    const x_ = Math.floor(location.x / this.cellSize.x);
-    const y_ = Math.floor(location.y / this.cellSize.y);
+    let x_ = Math.floor(location.x / this.cellSize.x);
+    let y_ = Math.floor(location.y / this.cellSize.y);
 
     return this.cells[y_][x_];
   }
 
-  updateCell(entity, previousCell) {
-    const currentCell = this.getCellFromVector(entity.location);
+  updateCells() {
+    for (let row of this.cells) {
+      for (let cell of row) {
+        for (let unit of cell.units.getAll()) {
+          const unitCell = this.getCellFromVector(unit.location);
 
-    if (!previousCell.position.equals(currentCell.position)) {
-      if (entity instanceof Unit) {
-        currentCell.units.append(entity);
-        previousCell.units.removeByValues(entity);
-      } else if (entity instanceof Platoon) {
-        currentCell.platoons.append(entity);
-        previousCell.platoons.removeByValues(entity);
+          if (!cell.position.equals(unitCell.position)) {
+            cell.units.removeById(unit.state.id);
+            unitCell.units.append(unit);
+          }
+        }
       }
     }
   }
 
-  getVisibleEntities(entity) {
-    const entityCell = this.getCellFromVector(entity.location);
-    const searchCells = this.getNeighbouringCells(entityCell);
-    const visibleEntities = [];
-    const entityDirection = entity.velocity.copy();
-    entityDirection.normalise();
+  getVisibleUnits(unit) {
+    const unitCell = this.getCellFromVector(unit.location);
+    const searchCells = this.getNeighbouringCells(unitCell);
+    const visibleUnits = [];
+    const unitDirection = unit.velocity.copy();
+    unitDirection.normalise();
 
     for (const cell of searchCells) {
       let otherNode = cell.units.head;
@@ -72,26 +69,26 @@ export default class Grid {
       while (otherNode) {
         const other = otherNode.value;
 
-        if (entity.state.id === other.state.id) {
+        if (unit.state.id === other.state.id) {
           otherNode = otherNode.next;
         } else {
           if (
-            (other.location.x - entity.location.x) *
-              (other.location.x - entity.location.x) +
-              (other.location.y - entity.location.y) *
-                (other.location.y - entity.location.y) <
-            entity.stats.acuity * entity.stats.acuity
+            (other.location.x - unit.location.x) *
+              (other.location.x - unit.location.x) +
+              (other.location.y - unit.location.y) *
+                (other.location.y - unit.location.y) <
+            unit.stats.acuity * unit.stats.acuity
           ) {
             const otherDirection = new Vector(
-              other.location.x - entity.location.x,
-              other.location.y - entity.location.y
+              other.location.x - unit.location.x,
+              other.location.y - unit.location.y
             );
             otherDirection.normalise();
 
-            const dot = entityDirection.dot(otherDirection);
+            const dot = unitDirection.dot(otherDirection);
 
-            if (MathUtils.map(dot, -1, 1, 180, 0) < entity.stats.FOV / 2) {
-              visibleEntities.push(other);
+            if (MathUtils.map(dot, -1, 1, 180, 0) < unit.stats.FOV / 2) {
+              visibleUnits.push(other);
             }
           }
 
@@ -100,7 +97,7 @@ export default class Grid {
       }
     }
 
-    return visibleEntities;
+    return visibleUnits;
   }
 
   getNeighbouringCells(cell) {
