@@ -73,8 +73,11 @@ export default class Unit {
             nearest.state.action = "JOIN";
             nearest.state.target = this;
             nearest.state.destination = this.location;
+          } else if (nearest.state.behaviour === "PLATOON") {
+            this.state.action = "JOIN";
+            this.state.target = nearest;
+            this.state.destination = nearest.location;
           }
-          return;
         }
       }
     }
@@ -133,18 +136,27 @@ export default class Unit {
       this.location.dist(this.state.target.location) <
       this.size.y * (this.size.x / 2)
     ) {
-      const reference = v4uuid();
       const ally = this.state.target;
-      this.state.target = null;
-      this.state.destination = null;
-      this.state.behaviour = "PLATOON";
-      this.state.action = "JOINING";
-      this.state.platoon = reference;
-      ally.state.target = null;
-      ally.state.destination = null;
-      ally.state.behaviour = "PLATOON";
-      ally.state.action = "JOINING";
-      ally.state.platoon = reference;
+
+      if (ally.state.behaviour === "PLATOON") {
+        this.state.target = null;
+        this.state.destination = null;
+        this.state.behaviour = "PLATOON";
+        this.state.action = "JOINING";
+        this.state.platoon = ally.state.platoon.state.id;
+      } else {
+        const reference = v4uuid();
+        this.state.target = null;
+        this.state.destination = null;
+        this.state.behaviour = "PLATOON";
+        this.state.action = "JOINING";
+        this.state.platoon = reference;
+        ally.state.target = null;
+        ally.state.destination = null;
+        ally.state.behaviour = "PLATOON";
+        ally.state.action = "JOINING";
+        ally.state.platoon = reference;
+      }
     } else {
       this.seek(this.state.target.location);
       this.updateLocation();

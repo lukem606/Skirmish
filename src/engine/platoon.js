@@ -1,8 +1,5 @@
 import { v4 as v4uuid } from "uuid";
-import Formations from "../data/formations";
 import LinkedList from "../utils/linkedList";
-import MathUtils from "../utils/mathUtils";
-import Unit from "./unit";
 import Vector from "../utils/vector";
 
 export default class Platoon {
@@ -26,19 +23,27 @@ export default class Platoon {
     };
 
     this.units = this.populate(units);
+    this.updateStats();
   }
 
   populate(units) {
     const unitList = new LinkedList();
-    let speed = 1000;
-    let acuity = 0;
-    let restTime = 0;
 
     for (const unit of units) {
       unit.state.platoon = this;
       unit.state.action = "PLATOON";
       unitList.append(unit);
+    }
 
+    return unitList;
+  }
+
+  updateStats() {
+    let speed = 1000;
+    let acuity = 0;
+    let restTime = 0;
+
+    for (const unit of this.units.getAll()) {
       speed = unit.stats.speed < speed ? unit.stats.speed : speed;
       acuity = unit.stats.acuity > acuity ? unit.stats.acuity : acuity;
       restTime =
@@ -48,8 +53,6 @@ export default class Platoon {
     this.stats.speed = speed;
     this.stats.acuity = acuity;
     this.stats.restTime = restTime;
-    this.state.formation = Formations.getFormation(units.length);
-    return unitList;
   }
 
   update() {
@@ -114,6 +117,14 @@ export default class Platoon {
     unit.applyBehaviour(avoid);
     unit.applyBehaviour(cohere);
     unit.applyBehaviour(align);
+  }
+
+  addUnit(unit) {
+    unit.state.platoon = this;
+    unit.state.action = this.state.action;
+    this.units.append(unit);
+
+    this.updateStats();
   }
 
   getDestination() {

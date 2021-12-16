@@ -64,16 +64,27 @@ export default class Game {
 
   updatePlatoons() {
     const platoonMap = {};
+    const platoonIds = this.platoons
+      .getAll()
+      .map((platoon) => platoon.state.id);
 
-    for (let unit of this.units.getAll()) {
+    for (const unit of this.units.getAll()) {
       if (
         unit.state.behaviour === "PLATOON" &&
         unit.state.action === "JOINING"
       ) {
-        if (platoonMap.hasOwnProperty(unit.state.platoon)) {
-          platoonMap[unit.state.platoon].push(unit);
+        if (platoonIds.includes(unit.state.platoon)) {
+          for (const platoon of this.platoons.getAll()) {
+            if (platoon.state.id === unit.state.platoon) {
+              platoon.addUnit(unit);
+            }
+          }
         } else {
-          platoonMap[unit.state.platoon] = [unit];
+          if (platoonMap.hasOwnProperty(unit.state.platoon)) {
+            platoonMap[unit.state.platoon].push(unit);
+          } else {
+            platoonMap[unit.state.platoon] = [unit];
+          }
         }
 
         const cell = this.grid.getCellFromVector(unit.location);
@@ -88,6 +99,24 @@ export default class Game {
         const colour = units[0].stats.team;
 
         this.platoons.append(new Platoon(origin.x, origin.y, units, colour));
+      }
+    }
+
+    for (const platoon of this.platoons.getAll()) {
+      if (platoon.units.length >= 10) {
+        let unitList = platoon.units.getAll();
+        unitList = MathUtils.shuffle(unitList);
+        const newUnits = [];
+        const origin = platoon.location.copy();
+
+        for (let i = 0; i < 5; i++) {
+          platoon.units.removeById(unitList[i].state.id);
+          newUnits.push(unitList[i]);
+        }
+
+        this.platoons.append(
+          new Platoon(origin.x, origin.y, newUnits, platoon.stats.team)
+        );
       }
     }
   }

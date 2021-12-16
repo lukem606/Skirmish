@@ -84,20 +84,33 @@ export default class Init {
     let colour;
     const units = new LinkedList();
 
-    for (let u = 0; u < 80; u++) {
-      const origin = new Vector(
-        Math.random() * global.WIDTH,
-        Math.random() * global.HEIGHT
-      );
+    for (let u = 0; u < 40; u++) {
+      let origin;
 
       if (u % 4 === 0) {
         colour = "RED";
+        origin = new Vector(
+          MathUtils.random(0, global.WIDTH / 2),
+          MathUtils.random(0, global.HEIGHT / 2)
+        );
       } else if (u % 4 === 1) {
         colour = "BLUE";
+        origin = new Vector(
+          MathUtils.random(global.WIDTH / 2, global.WIDTH),
+          MathUtils.random(0, global.HEIGHT / 2)
+        );
       } else if (u % 4 === 2) {
         colour = "GREEN";
+        origin = new Vector(
+          MathUtils.random(0, global.WIDTH / 2),
+          MathUtils.random(global.HEIGHT / 2, global.HEIGHT)
+        );
       } else if (u % 4 === 3) {
         colour = "YELLOW";
+        origin = new Vector(
+          MathUtils.random(global.WIDTH / 2, global.WIDTH),
+          MathUtils.random(global.HEIGHT / 2, global.HEIGHT)
+        );
       }
 
       const unit = new Unit(origin.x, origin.y, colour);
@@ -114,23 +127,35 @@ export default class Init {
     const platoons = new LinkedList();
     const units = new LinkedList();
 
-    for (let p = 0; p < 8; p++) {
+    for (let p = 0; p < 32; p++) {
       let colour;
+      let origin;
       const platoonUnits = [];
-
-      const origin = new Vector(
-        MathUtils.random(50, global.WIDTH - 50),
-        MathUtils.random(50, global.HEIGHT - 50)
-      );
 
       if (p % 4 === 0) {
         colour = "RED";
+        origin = new Vector(
+          MathUtils.random(50, global.WIDTH / 2),
+          MathUtils.random(50, global.HEIGHT / 2)
+        );
       } else if (p % 4 === 1) {
         colour = "BLUE";
+        origin = new Vector(
+          MathUtils.random(global.WIDTH / 2, global.WIDTH - 50),
+          MathUtils.random(50, global.HEIGHT / 2)
+        );
       } else if (p % 4 === 2) {
         colour = "GREEN";
+        origin = new Vector(
+          MathUtils.random(50, global.WIDTH / 2),
+          MathUtils.random(global.HEIGHT / 2, global.HEIGHT - 50)
+        );
       } else if (p % 4 === 3) {
         colour = "YELLOW";
+        origin = new Vector(
+          MathUtils.random(global.WIDTH / 2, global.WIDTH - 50),
+          MathUtils.random(global.HEIGHT / 2, global.HEIGHT - 50)
+        );
       }
 
       for (let u = 0; u < 9; u++) {
