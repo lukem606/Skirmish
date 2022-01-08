@@ -56,8 +56,6 @@ export default class Platoon {
   }
 
   update() {
-    this.location = this.getMeanLocation(this.units.getAll());
-
     if (this.state.behaviour === "NON-COMBAT") {
       if (this.state.action === "PATROL") {
         this.patrol();
@@ -67,6 +65,8 @@ export default class Platoon {
     } else if (this.state.behaviour === "COMBAT") {
       // TODO
     }
+
+    this.location = this.getMeanLocation(this.units.getAll());
   }
 
   patrol() {

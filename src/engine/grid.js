@@ -42,9 +42,9 @@ export default class Grid {
   }
 
   updateCells() {
-    for (let row of this.cells) {
-      for (let cell of row) {
-        for (let unit of cell.units.getAll()) {
+    for (const row of this.cells) {
+      for (const cell of row) {
+        for (const unit of cell.units.getAll()) {
           const unitCell = this.getCellFromVector(unit.location);
 
           if (!cell.position.equals(unitCell.position)) {
@@ -52,8 +52,39 @@ export default class Grid {
             unitCell.units.append(unit);
           }
         }
+
+        for (const ballistic of cell.ballistics.getAll()) {
+          const ballisticCell = this.getCellFromVector(ballistic.location);
+
+          if (!cell.position.equals(ballisticCell.position)) {
+            cell.ballistics.removeById(ballistic.state.id);
+            ballisticCell.ballistics.append(ballistic);
+          }
+        }
       }
     }
+  }
+
+  getBulletUnits(current, future) {
+    const units = [];
+    const currentCell = this.getCellFromVector(current);
+    const futureCell = this.getCellFromVector(future);
+
+    if (currentCell == futureCell) {
+      currentCell.units.getAll().forEach((unit) => {
+        units.push(unit);
+      });
+    } else {
+      currentCell.units.getAll().forEach((unit) => {
+        units.push(unit);
+      });
+
+      futureCell.units.getAll().forEach((unit) => {
+        units.push(unit);
+      });
+    }
+
+    return units;
   }
 
   getVisibleUnits(unit) {

@@ -1,3 +1,4 @@
+import Ballistic from "./ballistic";
 import Init from "./init";
 import MathUtils from "../utils/mathUtils";
 import Platoon from "./platoon";
@@ -5,11 +6,12 @@ import Render from "./render";
 
 export default class Game {
   constructor() {
-    const { grid, map, platoons, units } = Init.init(20);
+    const { grid, map, platoons, units, ballistics } = Init.init(20);
     this.grid = grid;
     this.map = map;
     this.platoons = platoons;
     this.units = units;
+    this.ballistics = ballistics;
 
     this.running = true;
     this.previous = performance.now();
@@ -34,6 +36,7 @@ export default class Game {
     Render.renderOverlay();
     Render.renderAllPlatoons(this.platoons.getAll());
     Render.renderAllUnits(this.units.getAll());
+    Render.renderAllBallistics(this.ballistics.getAll());
 
     if (!this.running) {
       if ((performance.now() - this.previous) % 1600 < 800) {
@@ -47,7 +50,7 @@ export default class Game {
       platoon.update();
     }
 
-    for (let unit of this.units.getAll()) {
+    for (const unit of this.units.getAll()) {
       const visibleUnits = this.grid.getVisibleUnits(unit);
 
       if (unit.state.behaviour !== "PLATOON") {
@@ -57,8 +60,43 @@ export default class Game {
   }
 
   updatePhysics() {
-    for (let unit of this.units.getAll()) {
+    const { WIDTH, HEIGHT } = global;
+
+    for (const ballistic of this.ballistics.getAll()) {
+      ballistic.checkCollisions(this.grid);
+
+      if (ballistic.state.distanceTravelled <= ballistic.stats.limit) {
+        ballistic.updateLocation();
+
+        if (
+          ballistic.location.x < 0 ||
+          ballistic.location.x > WIDTH ||
+          ballistic.location.y < 0 ||
+          ballistic.location.y > HEIGHT
+        ) {
+          const ballisticCell = this.grid.getCellFromVector(ballistic.location);
+          ballisticCell.ballistics.removeById(ballistic.state.id);
+          this.ballistics.removeById(ballistic.state.id);
+        }
+      } else {
+        const ballisticCell = this.grid.getCellFromVector(ballistic.location);
+        ballisticCell.ballistics.removeById(ballistic.state.id);
+        this.ballistics.removeById(ballistic.state.id);
+      }
+    }
+
+    for (const unit of this.units.getAll()) {
       unit.checkEdges();
+
+      if (unit.state.action === "FIRE") {
+        const unitCell = this.grid.getCellFromVector(unit.location);
+        const ballistic = new Ballistic(unit);
+
+        unitCell.ballistics.append(ballistic);
+        this.ballistics.append(ballistic);
+
+        unit.state.action = "ATTACK";
+      }
     }
   }
 
@@ -86,9 +124,6 @@ export default class Game {
             platoonMap[unit.state.platoon] = [unit];
           }
         }
-
-        const cell = this.grid.getCellFromVector(unit.location);
-        cell.units.removeById(unit.state.id);
       }
     }
 

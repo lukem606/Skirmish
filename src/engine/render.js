@@ -1,5 +1,5 @@
 import COLOURS from "../data/colours";
-import ColourUtils from "../utils/coloursUtils";
+import ColourUtils from "../utils/colourUtils";
 import MathUtils from "../utils/mathUtils";
 
 export default class Render {
@@ -52,6 +52,12 @@ export default class Render {
   static renderAllUnits(units) {
     units.forEach((unit) => {
       this.renderUnit(unit);
+    });
+  }
+
+  static renderAllBallistics(ballistics) {
+    ballistics.forEach((ballistics) => {
+      this.renderBallistic(ballistics);
     });
   }
 
@@ -112,7 +118,11 @@ export default class Render {
       context.closePath();
     }
 
-    context.fillStyle = unit.state.colour;
+    if (unit.stats.health > 0) {
+      context.fillStyle = unit.state.colour;
+    } else {
+      context.fillStyle = ColourUtils.getRGB(COLOURS.GREY);
+    }
 
     context.fillRect(
       -0.25 * unit.size.x,
@@ -132,6 +142,18 @@ export default class Render {
       unit.size.x,
       0.5 * unit.size.y
     );
+
+    context.restore();
+  }
+
+  static renderBallistic(ballistic) {
+    const { context } = global;
+    context.save();
+    context.translate(ballistic.location.x, ballistic.location.y);
+    context.rotate(ballistic.angle);
+
+    context.fillStyle = ColourUtils.getRGB(COLOURS.WHITE);
+    context.fillRect(0, 0, 2, 2);
 
     context.restore();
   }

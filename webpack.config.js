@@ -15,6 +15,7 @@ module.exports = {
     static: path.resolve(__dirname, "./deploy"),
     open: true,
   },
+  devtool: "source-map",
   module: {
     rules: [
       {

@@ -1,6 +1,6 @@
 import { v4 as v4uuid } from "uuid";
 import COLOURS from "../data/colours";
-import ColourUtils from "../utils/coloursUtils";
+import ColourUtils from "../utils/colourUtils";
 import MathUtils from "../utils/mathUtils";
 import Vector from "../utils/vector";
 
@@ -55,14 +55,11 @@ export default class Unit {
       const nearest = this.getNearestEntity(entities);
 
       if (nearest) {
-        // if (nearest.stats.team !== this.stats.team) {
-        //   this.state.behaviour = "COMBAT";
-        //   this.state.action = "ATTACK";
-        //   this.state.target = nearest;
-        // console.log("CHEESE BUNS");
-        // return;
-        // } else if (nearest.stats.team === this.stats.team) {
-        if (nearest.stats.team === this.stats.team) {
+        if (nearest.stats.team !== this.stats.team) {
+          this.state.behaviour = "COMBAT";
+          this.state.action = "ATTACK";
+          this.state.target = nearest;
+        } else if (nearest.stats.team === this.stats.team) {
           if (
             nearest.state.behaviour === "NON-COMBAT" &&
             nearest.state.action !== "JOIN"
@@ -101,7 +98,7 @@ export default class Unit {
 
   combatBehaviour() {
     if (this.state.action === "ATTACK") {
-      // TODO
+      this.attack();
     } else if (this.state.action === "SEARCH") {
       // TODO
     }
@@ -160,6 +157,22 @@ export default class Unit {
     } else {
       this.seek(this.state.target.location);
       this.updateLocation();
+    }
+  }
+
+  attack() {
+    if (this.location.dist(this.state.target.location) <= this.stats.range) {
+      if (performance.now() - this.state.previous >= 1000) {
+        this.state.action = "FIRE";
+        this.state.previous = performance.now();
+      }
+    } else {
+      if (this.location.dist(this.state.target.location) <= this.stats.acuity) {
+        this.seek(this.state.target.location);
+        this.updateLocation();
+      } else {
+        this.state.action = "SEARCH";
+      }
     }
   }
 
@@ -321,6 +334,10 @@ export default class Unit {
 
   applyBehaviour(force) {
     this.acceleration.add(force);
+  }
+
+  applyDamage(damage) {
+    this.stats.health -= damage;
   }
 
   getSpeed() {

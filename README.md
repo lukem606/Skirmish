@@ -52,3 +52,28 @@ _14/12/21_
 - Restructuring of project. Global lists for platoons and units, co-ordinate with grid cell lists.
 - Improved platoon movement and flocking.
 - Creating platoons from 2 joined units now stable.
+
+_25/12/21_
+
+- Fixed bug in unit detection of units in platoons (for joining platoons)
+- Ballistics class written
+- Units detect enemies and enter 'combat' behaviour
+- Units seek enemy if they are not within attack range
+- Units attack in-range enemies, creating instances of Ballistic class
+- Ballistic moves in straight line towards target
+- TODO: implement ballistics collisions
+  - Get cell at ballistic current position and future position
+  - Get all units in cells
+  - Filter by distance, then dot product of direction vectors
+    - Direction of velocity, then direction between two entities
+
+_8/1/22_
+
+- Implemented ballistics collisions
+- Units render gray when health is 0 or less
+- TODO:
+  - Implement unit death properly
+    - Dead units should no longer perform any activity
+    - Dead units should be removed from platoons
+    - Units totals should be updated
+    - Aggressor unit's target should be updated

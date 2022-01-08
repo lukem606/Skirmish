@@ -12,12 +12,19 @@ export default class Init {
 
     const grid = Init.initialiseGrid();
     const map = Init.initialiseMap();
-    const { platoons, units } = Init.initialisePlatoons(grid);
-    units.merge(Init.initialiseUnits(grid));
-    // const units = Init.initialiseUnits(grid);
-    // const platoons = new LinkedList();
+    // const { platoons, units } = Init.initialisePlatoons(grid);
+    // units.merge(Init.initialiseUnits(grid));
+    const units = Init.initialiseUnits(grid);
+    const platoons = new LinkedList();
+    const ballistics = new LinkedList();
 
-    return { grid: grid, map: map, platoons: platoons, units: units };
+    return {
+      grid: grid,
+      map: map,
+      platoons: platoons,
+      units: units,
+      ballistics: ballistics,
+    };
   }
 
   static initialiseCanvas(pad) {
@@ -127,7 +134,7 @@ export default class Init {
     const platoons = new LinkedList();
     const units = new LinkedList();
 
-    for (let p = 0; p < 32; p++) {
+    for (let p = 0; p < 4; p++) {
       let colour;
       let origin;
       const platoonUnits = [];
@@ -158,7 +165,7 @@ export default class Init {
         );
       }
 
-      for (let u = 0; u < 9; u++) {
+      for (let u = 0; u < 6; u++) {
         const unit = new Unit(
           origin.x + MathUtils.random(-20, 20),
           origin.y + MathUtils.random(-20, 20),
