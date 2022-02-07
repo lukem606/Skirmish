@@ -91,7 +91,7 @@ export default class Init {
     let colour;
     const units = new LinkedList();
 
-    for (let u = 0; u < 40; u++) {
+    for (let u = 0; u < 80; u++) {
       let origin;
 
       if (u % 4 === 0) {
